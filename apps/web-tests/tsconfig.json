@@ -1,0 +1,6 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": { "outDir": "../../dist/out-tsc/apps/web-tests", "types": ["node", "playwright"] },
+    "include": ["**/*.ts", "**/*.tsx", "**/*.js"]
+  }
+  

@@ -1,0 +1,7 @@
+{
+    "name": "i18n",
+    "root": "libs/i18n",
+    "projectType": "library",
+    "targets": {}
+  }
+  

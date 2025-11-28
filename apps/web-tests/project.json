@@ -1,0 +1,13 @@
+{
+  "name": "web-tests",
+  "root": "apps/web-tests",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "command": "npx playwright test",
+      "options": {
+        "cwd": "apps/web-tests"
+      }
+    }
+  }
+}

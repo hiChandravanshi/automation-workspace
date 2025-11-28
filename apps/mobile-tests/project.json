@@ -1,0 +1,13 @@
+{
+  "name": "mobile-tests",
+  "root": "apps/mobile-tests",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "command": "npx wdio wdio.conf.ts",
+      "options": {
+        "cwd": "apps/mobile-tests"
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+    "name": "@automation-workspace/logger",
+    "version": "0.0.1",
+    "main": "index.ts",
+    "types": "index.ts",
+    "private": false
+  }
+  

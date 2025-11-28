@@ -1,0 +1,14 @@
+{
+    "name": "api-tests",
+    "root": "apps/api-tests",
+    "projectType": "application",
+    "targets": {
+      "test": {
+        "command": "npx playwright test",
+        "options": {
+          "cwd": "apps/api-tests"
+        }
+      }
+    }
+  }
+  

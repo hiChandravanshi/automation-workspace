@@ -1,0 +1,6 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": { "outDir": "../../dist/out-tsc/libs/i18n" },
+    "include": ["src/**/*.ts", "src/**/*.json"]
+  }
+  
