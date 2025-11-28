@@ -1,95 +1,296 @@
-# AutomationWorkspace
+# Nx Monorepo Guide
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+This README explains how to work inside our Nx monorepo, how to add new **apps**, how to create reusable **libraries**, and how to publish a shared library to any registry.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+---
 
-Run `npx nx graph` to visually explore what got created. Now, let's get you up to speed!
+# 📁 Monorepo Structure
 
-## Run tasks
-
-To run tasks with Nx use:
-
-```sh
-npx nx <target> <project-name>
+```
+automation-workspace/
+│
+├── apps/              # All runnable projects (web-tests, mobile-tests, api-tests, etc.)
+│   └── web-tests/
+│   └── mobile-tests/
+│   └── api-tests/
+│
+├── shared/            # Reusable libraries shared across apps
+│   └── logger/
+│   └── i18n/
+│   └── utils/
+│
+├── nx.json
+├── package.json
+└── tsconfig.base.json
 ```
 
-For example:
+---
 
-```sh
-npx nx build myproject
+# 🚀 1. What is an **App** folder?
+
+An **app** is a runnable project — something that executes tests or performs actions.
+
+Examples:
+
+* **web-tests** → Playwright tests
+* **mobile-tests** → WebdriverIO + Appium tests
+* **api-tests** → Playwright API tests
+* **stress-tests** → k6 load tests
+
+Apps depend on shared libraries but **must not depend on each other**.
+Apps contain:
+
+* test code
+* configs
+* setup files
+* environment files
+
+---
+
+# 🛠 1.1 How to create a new App (step‑by‑step)
+
+### Example: Create a new app called `sample-tests`
+
+1️⃣ Navigate to the repo root
+
+```
+cd automation-workspace
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+2️⃣ Create the folder manually
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-To install a new plugin you can use the `nx add` command. Here's an example of adding the React plugin:
-```sh
-npx nx add @nx/react
+```
+mkdir -p apps/sample-tests
 ```
 
-Use the plugin's generator to create new projects. For example, to create a new React app or library:
+3️⃣ Add a minimal `project.json`
 
-```sh
-# Generate an app
-npx nx g @nx/react:app demo
-
-# Generate a library
-npx nx g @nx/react:lib some-lib
+```
+apps/sample-tests/project.json
 ```
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
-
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Set up CI!
-
-### Step 1
-
-To connect to Nx Cloud, run the following command:
-
-```sh
-npx nx connect
+```json
+{
+  "name": "sample-tests",
+  "root": "apps/sample-tests",
+  "sourceRoot": "apps/sample-tests/src",
+  "targets": {}
+}
 ```
 
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
+4️⃣ Add an entry to `tsconfig.base.json` paths (optional)
+This allows imports like:
 
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-### Step 2
-
-Use the following command to configure a CI workflow for your workspace:
-
-```sh
-npx nx g ci-workflow
+```
+import { logger } from "@automation-workspace/logger";
 ```
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Paths are auto‑picked from shared libs, so apps usually don’t need custom paths.
 
-## Install Nx Console
+5️⃣ Add your testing framework (Playwright, WDIO, etc.)
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+Apps are fully independent: install only what the app needs.
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+You now have a runnable Nx app.
 
-## Useful links
+---
 
-Learn more:
+# 📚 2. What is a **Library**?
 
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+A **library** (lib) is a shared, reusable package that multiple apps use.
 
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Examples of things that belong in a library:
+
+### ✔ Good candidates for libs
+
+* logging
+* env/config helper
+* i18n translations
+* API clients
+* validation utilities
+* selectors
+* test data builders
+
+### ❌ Things that should NOT go into libs
+
+* test cases
+* framework configs (wdio.conf, playwright.config)
+* environment-specific secrets
+* BrowserStack/Appium device configs
+
+Libraries live under:
+
+```
+/libs/<libname>
+```
+
+---
+
+# 🛠 2.1 How to create a new Library
+
+### Example: Create a library called `i18n`
+
+1️⃣ Create the folder
+
+```
+mkdir -p shared/i18n/src
+```
+
+2️⃣ Add entry files
+
+```
+shared/i18n/index.ts
+shared/i18n/src/... your code
+```
+
+3️⃣ Add a `package.json` inside the library
+
+```
+shared/i18n/package.json
+```
+
+```json
+{
+  "name": "@automation-workspace/i18n",
+  "version": "0.0.1",
+  "main": "index.ts",
+  "types": "index.ts",
+  "private": false
+}
+```
+
+4️⃣ Add `project.json`
+
+```
+shared/i18n/project.json
+```
+
+```json
+{
+  "name": "shared-i18n",
+  "root": "shared/i18n",
+  "sourceRoot": "shared/i18n/src",
+  "targets": {}
+}
+```
+
+5️⃣ Add TypeScript path alias (for easy imports)
+Edit **tsconfig.base.json**:
+
+```json
+{
+  "compilerOptions": {
+    "paths": {
+      "@automation-workspace/i18n": ["shared/i18n/index.ts"]
+    }
+  }
+}
+```
+
+Now apps can use it like:
+
+```ts
+import { t } from "@automation-workspace/i18n";
+```
+
+---
+
+# 📦 3. How to Publish a Library
+
+We publish *from inside the library folder*, using the library’s own `package.json`.
+
+Nx no longer provides a built‑in `publish` executor, so we use a simple command.
+
+---
+
+# 🛠 3.1 Steps to Publish a Library (using shared/logger example)
+
+### 1️⃣ Go to the library folder
+
+```
+cd shared/logger
+```
+
+### 2️⃣ Ensure the package.json is correct
+
+```
+{
+  "name": "@automation-workspace/logger",
+  "version": "0.0.1",
+  "main": "index.ts",
+  "types": "index.ts",
+  "private": false
+}
+```
+
+Scoped packages MUST be published with:
+
+```
+--access public
+```
+
+### 3️⃣ Publish manually
+
+```
+npm publish --access public 
+```
+or from the root run
+
+```
+npx nx run shared-logger:publish
+```
+see the shared-logger project.json to learn how to configure this command
+
+This will publish the `.ts` files as-is.
+
+---
+
+# 🛠 3.2 Publish using Nx (optional)
+
+Add this to `shared/logger/project.json`:
+
+```json
+{
+  "name": "shared-logger",
+  "root": "shared/logger",
+  "sourceRoot": "shared/logger/src",
+  "targets": {
+    "publish": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "shared/logger",
+        "command": "npm publish libs/shared-logger/ --access public"
+      }
+    }
+  }
+}
+```
+
+Now run:
+
+```
+npx nx publish shared-logger
+```
+
+---
+
+# ✅ Summary
+
+### ✔ Apps
+
+* runnable test projects
+* contain test code + config
+
+### ✔ Libs
+
+* reusable shared code
+* have their own package.json
+* imported via @automation-workspace/*
+
+### ✔ Publishing
+
+* use npm publish (or Nx wrapper)
+* scoped packages require `--access public` (for public packages)
+* ensure correct folder and package.json
+
+---
