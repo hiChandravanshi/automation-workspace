@@ -1,0 +1,8 @@
+{
+  "name": "@automation-workspace/api-tests",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@playwright/test": "^1.57.0"
+  }
+}

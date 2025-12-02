@@ -14,6 +14,9 @@
       "options": {
         "cwd": "apps/web-tests"
       }
+    },
+    "install": {
+      "command": "npm install --workspace apps/api-tests --include-workspace-root"
     }
   }
 }
