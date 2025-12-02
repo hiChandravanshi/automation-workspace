@@ -1,0 +1,10 @@
+{
+  "name": "@automation-workspace/web-tests",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@axe-core/playwright": "^4.11.0",
+    "axe-html-reporter": "^2.2.11",
+    "@playwright/test": "^1.57.0"
+  }
+}
