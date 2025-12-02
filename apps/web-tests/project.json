@@ -8,6 +8,12 @@
       "options": {
         "cwd": "apps/web-tests"
       }
+    },
+    "test:ci": {
+      "command": "npx browserstack-node-sdk playwright test",
+      "options": {
+        "cwd": "apps/web-tests"
+      }
     }
   }
 }

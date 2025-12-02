@@ -1,0 +1,13 @@
+userName: {userName}
+accessKey: {accessKey}
+platforms:
+  - browserName: chrome
+    os: Windows
+    osVersion: 11
+    browserVersion: 115.0
+buildIdentifier: 1234
+consoleLogs: info
+projectName: sciensus
+buildName: web-test
+name: sample-web-test
+accessibility: false
