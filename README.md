@@ -274,6 +274,48 @@ npx nx publish shared-logger
 
 ---
 
+# 4. How to manage package installation
+
+# 4.1 How to manage packages
+
+- project specific dependency should be mentioned in the project specific `package.json` for example if we want a dependecy only needed for the `api-test` app we will put it under `apps/api-tests/package.json` like
+
+```
+"dependencies": {
+    "@playwright/test": "^1.57.0"
+}
+```
+
+- do mention the project path under workspace of the root `package.json` like
+
+```
+"workspaces": [
+    "apps/*",
+    "libs/*"
+    "apps/api-tests" // like this
+],
+```
+
+# 4.2 Install all the packages
+
+To install all the packages from all the package.json in the mono repo run the below command
+
+```
+npm install
+```
+
+# 4.3 To run packages specific to a project like apps/web-tests or apps/api-tests
+
+```
+npm run install:api-tests or npm install --workspace apps/api-tests --include-workspace-root
+```
+
+```
+npm run install:web-tests or npm install --workspace apps/web-tests --include-workspace-root
+```
+
+The above command install the dependencies from the workspace and then it installs the dependencies mentioned in the root `package.json`. 
+
 # ✅ Summary
 
 ### ✔ Apps
@@ -286,6 +328,10 @@ npx nx publish shared-logger
 * reusable shared code
 * have their own package.json
 * imported via @automation-workspace/*
+
+### ✔ Dependencies
+
+* can handle separate dependencies (project specific package.json) and common dependencies (root specific package.json)
 
 ### ✔ Publishing
 
